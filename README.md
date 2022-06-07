@@ -1,9 +1,9 @@
 # Laravel Attachment Package
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/va/attachment.svg?style=flat-square)](https://packagist.org/packages/imvahid/attachment)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/va/attachment.svg?style=flat-square)](https://packagist.org/packages/va/attachment)
 [![GitHub issues](https://img.shields.io/github/issues/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/issues)
 [![GitHub stars](https://img.shields.io/github/stars/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/network)
-[![Total Downloads](https://img.shields.io/packagist/dt/va/attachment.svg?style=flat-square)](https://packagist.org/packages/imvahid/attachment)
+[![Total Downloads](https://img.shields.io/packagist/dt/va/attachment.svg?style=flat-square)](https://packagist.org/packages/va/attachment)
 [![GitHub license](https://img.shields.io/github/license/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/blob/master/LICENSE)
 
 
