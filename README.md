@@ -1,10 +1,10 @@
 # Laravel Attachment Package
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/va/attachment.svg?style=flat-square)](https://packagist.org/packages/imvahid/attachment)
-[![GitHub issues](https://img.shields.io/github/issues/va/attachment?style=flat-square)](https://github.com/imvahid/attachment/issues)
-[![GitHub stars](https://img.shields.io/github/stars/va/attachment?style=flat-square)](https://github.com/imvahid/attachment/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/va/attachment?style=flat-square)](https://github.com/imvahid/attachment/network)
+[![GitHub issues](https://img.shields.io/github/issues/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/issues)
+[![GitHub stars](https://img.shields.io/github/stars/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/network)
 [![Total Downloads](https://img.shields.io/packagist/dt/va/attachment.svg?style=flat-square)](https://packagist.org/packages/imvahid/attachment)
-[![GitHub license](https://img.shields.io/github/license/va/attachment?style=flat-square)](https://github.com/imvahid/attachment/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/imvahid/attachment?style=flat-square)](https://github.com/imvahid/attachment/blob/master/LICENSE)
 
 
 A laravel package for manage you're uploads (images and files), that use ajax and bootstrap for client side and use [plank/laravel-mediable](https://github.com/plank/laravel-mediable) for server side and store files.
