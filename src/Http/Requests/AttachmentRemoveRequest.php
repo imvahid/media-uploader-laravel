@@ -24,7 +24,7 @@ class AttachmentRemoveRequest extends FormRequest
     public function rules()
     {
         return [
-            'object_id' => ['required', 'exists:media,id'],
+            'object_id' => ['required', 'exists:' . (!is_null(config('attachment.connection_name')) ? config('attachment.connection_name').'.' : '') . 'media,id'],
             'object_type' => ['required', 'in:image,attachment,video']
         ];
     }
@@ -35,6 +35,5 @@ class AttachmentRemoveRequest extends FormRequest
             'object_id.exists' => config('attachment.remove_file_failed_message'),
             'object_type.in' => config('attachment.remove_file_failed_message')
         ];
-
     }
 }

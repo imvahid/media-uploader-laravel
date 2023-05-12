@@ -13,9 +13,13 @@ class AddCaptionFieldToMedia extends Migration
      */
     public function up()
     {
-        Schema::table('media', function (Blueprint $table) {
-            $table->string('caption', 512)->nullable()->after('size');
-        });
+        if (Schema::hasTable('media')) {
+            Schema::table('media', function (Blueprint $table) {
+                if (!Schema::hasColumn('media', 'caption')) {
+                    $table->string('caption', 512)->nullable()->after('size');
+                }
+            });
+        }
     }
 
     /**
@@ -25,8 +29,10 @@ class AddCaptionFieldToMedia extends Migration
      */
     public function down()
     {
-        Schema::table('media', function (Blueprint $table) {
-            $table->dropColumn('caption');
-        });
+        if (Schema::hasTable('media')) {
+            Schema::table('media', function (Blueprint $table) {
+                $table->dropColumn('caption');
+            });
+        }
     }
 }

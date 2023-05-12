@@ -57,18 +57,31 @@
     </div>
     <div class="col-md-12 gallery_files">
         @if( old( $name, $data) )
-            @foreach( old( $name, $data) as $old_image )
-                @php $last_image = \Plank\Mediable\Media::query()->find($old_image); @endphp
+            @foreach( old($name, $data) as $old_image )
+                @php $last_image = config('attachment.media_model')::query()->find($old_image); @endphp
                 <div class="gallery_file_upload mb-2">
                     <div class="file_info">
-                        @if(in_array(config('filesystems.disks.' . $last_image->disk . '.driver'), ['ftp', 's3', 'sftp']))
+                        @if(in_array(config('filesystems.disks.' . $last_image->disk . '.driver'), ['ftp', 'sftp']))
                             @php
                                 $file_url = config('filesystems.disks.' . $last_image->disk . '.protocol')  . '://' . config('filesystems.disks.' . $last_image->disk . '.host') . '/' . $last_image->getDiskPath();
                                 $variantMedia = [];
                                 foreach(config('attachment.image_variant_list') as $variant) {
-                                    $variantMedia[] = \Plank\Mediable\Facades\ImageManipulator::createImageVariant($last_image, $variant);
+                                    $variantMedia[] = $last_image->findVariant($variant);
                                 }
                                 $thumbnail = config('filesystems.disks.' . $last_image->disk . '.protocol')  . '://' . config('filesystems.disks.' . $last_image->disk . '.host') . '/' . $variantMedia[0]->getDiskPath();
+                            @endphp
+                        @elseif(in_array(config('filesystems.disks.' . $last_image->disk . '.driver'), ['s3']))
+                            @php
+                                $file_url = 'https://' . config('filesystems.disks.' . $last_image->disk . '.bucket') .
+                                    '.' . config('filesystems.disks.' . $last_image->disk . '.region') .
+                                    '/' . $last_image->getDiskPath();
+                                $variantMedia = [];
+                                foreach(config('attachment.image_variant_list') as $variant) {
+                                    $variantMedia[] = $last_image->findVariant($variant);
+                                }
+                                $thumbnail = 'https://' . config('filesystems.disks.' . $last_image->disk . '.bucket') .
+                                    '.' . config('filesystems.disks.' . $last_image->disk . '.region') .
+                                    '/' . $variantMedia[0]->getDiskPath();
                             @endphp
                         @else
                             @php

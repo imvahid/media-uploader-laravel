@@ -9,28 +9,28 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Plank\Mediable\Facades\ImageManipulator;
 use Plank\Mediable\Facades\MediaUploader;
-use Plank\Mediable\Media;
 
 class AjaxUploadController extends Controller
 {
     public function upload( AttachmentUploadRequest  $request )
     {
-        if( $request->has('disk') && in_array(config('filesystems.disks.' . $request->disk . '.driver'), ['ftp', 's3', 'sftp']) ) {
+        if (
+            $request->has('disk') &&
+            in_array(config('filesystems.disks.' . $request->disk . '.driver'), ['ftp', 's3', 'sftp'])
+        ) {
             return $this->remote($request);
         }
-
         return $this->local($request);
-
     }
 
     public function local($request)
     {
-        if( $request->has('file_type') && ($request->file_type == 'image' || $request->file_type == 'video') ) {
-            $disk = 'public';
-        } else {
-            ( $request->has('disk') && $request->file_type == 'attachment' )
-                ? $disk = $request->disk
-                : $disk = 'private';
+        if (
+            $request->has('file_type')
+            &&
+            ($request->file_type == 'image' || $request->file_type == 'video') || ($request->file_type == 'attachment')
+        ) {
+            $request->has('disk') ? $disk = $request->disk : $disk = 'public';
         }
 
         (config('attachment.hash_file_names'))
@@ -49,11 +49,10 @@ class AjaxUploadController extends Controller
 
         if( $request->file_type == 'image' ) {
             $response->file_url = Storage::disk($disk)->url($media->getDiskPath());
-            $variantMedia = [];
             foreach(config('attachment.image_variant_list') as $variant) {
-                $variantMedia[] = ImageManipulator::createImageVariant($media, $variant);
+                $currentVariant = ImageManipulator::createImageVariant($media, $variant);
+                $response->{$variant} = Storage::disk($disk)->url($currentVariant->getDiskPath());
             }
-            $response->thumbnail = Storage::disk($disk)->url($variantMedia[0]->getDiskPath());
         } elseif( $request->file_type == 'video' ) {
             $response->file_url = Storage::disk($disk)->url($media->getDiskPath());
         } elseif( $request->file_type == 'attachment' ) {
@@ -68,7 +67,7 @@ class AjaxUploadController extends Controller
                 Storage::disk($disk)->url($media->getDiskPath())
             ;
         }
-        return response()->json( $response );
+        return response()->json($response);
     }
 
     public function remote($request)
@@ -87,22 +86,49 @@ class AjaxUploadController extends Controller
         $response->file_key = $media->getKey();
         $response->file_name = $media->basename;
 
-        if( $request->file_type == 'image' ) {
-            $response->file_url = config('filesystems.disks.' . $request->disk . '.protocol')  . '://' . config('filesystems.disks.' . $request->disk . '.host') . '/' . config('filesystems.disks.' . $request->disk . '.base_url') . $media->getDiskPath();
-            $variantMedia = [];
-            foreach(config('attachment.image_variant_list') as $variant) {
-                $variantMedia[] = ImageManipulator::createImageVariant($media, $variant);
+        if (in_array(config('filesystems.disks.' . $request->disk . '.driver'), ['ftp', 'sftp'])) {
+            if( $request->file_type == 'image' ) {
+                $response->file_url = config('filesystems.disks.' . $request->disk . '.protocol')  . '://' . config('filesystems.disks.' . $request->disk . '.host') . '/' . config('filesystems.disks.' . $request->disk . '.base_url') . $media->getDiskPath();
+                foreach(config('attachment.image_variant_list') as $variant) {
+                    $currentVariant = ImageManipulator::createImageVariant($media, $variant);
+                    $response->{$variant} = config('filesystems.disks.' . $request->disk . '.protocol')  . '://' . config('filesystems.disks.' . $request->disk . '.host') . '/' . config('filesystems.disks.' . $request->disk . '.base_url') . $currentVariant->getDiskPath();
+                }
+            } else {
+                $response->file_url = config('filesystems.disks.' . $request->disk . '.protocol')  . '://' . config('filesystems.disks.' . $request->disk . '.host') . '/' .  config('filesystems.disks.' . $request->disk . '.base_url') . $media->getDiskPath();
             }
-            $response->thumbnail = config('filesystems.disks.' . $request->disk . '.protocol')  . '://' . config('filesystems.disks.' . $request->disk . '.host') . '/' . config('filesystems.disks.' . $request->disk . '.base_url') . $variantMedia[0]->getDiskPath();
-        } else {
-            $response->file_url = config('filesystems.disks.' . $request->disk . '.protocol')  . '://' . config('filesystems.disks.' . $request->disk . '.host') . '/' .  config('filesystems.disks.' . $request->disk . '.base_url') . $media->getDiskPath();
         }
 
-        return response()->json( $response );
+        if ($request->file_type == 'image') {
+            $response->file_url = 'https://' .
+                config('filesystems.disks.' . $request->disk . '.bucket') .
+                '.' .
+                config('filesystems.disks.' . $request->disk . '.region') .
+                '/' .
+                $media->getDiskPath();
+
+            foreach (config('attachment.image_variant_list') as $variant) {
+                $currentVariant = ImageManipulator::createImageVariant($media, $variant);
+                $response->{$variant} = 'https://' .
+                    config('filesystems.disks.' . $request->disk . '.bucket') .
+                    '.' .
+                    config('filesystems.disks.' . $request->disk . '.region') .
+                    '/' .
+                    $currentVariant->getDiskPath();
+            }
+        } else {
+            $response->file_url = 'https://' .
+                config('filesystems.disks.' . $request->disk . '.bucket') .
+                '.' .
+                config('filesystems.disks.' . $request->disk . '.region') .
+                '/' .
+                $media->getDiskPath();
+        }
+
+        return response()->json($response);
     }
 
     public function remove( AttachmentRemoveRequest $request ) {
-        $media = Media::query()->find($request->object_id);
+        $media = config('attachment.media_model')::query()->find($request->object_id);
 
         if($request->object_type == 'image') {
             foreach(config('attachment.image_variant_list') as $variant) {

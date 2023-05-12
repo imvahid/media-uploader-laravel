@@ -57,12 +57,18 @@
     <div class="col-md-12 video_files">
         @if( old($name, $data) )
             @foreach( old($name, $data) as $last_video )
-                @php $last_video = \Plank\Mediable\Media::query()->find($last_video); @endphp
+                @php $last_video = config('attachment.media_model')::query()->find($last_video); @endphp
                 <div class="video_file_upload mb-2">
                     <div class="file_info">
-                        @if(in_array(config('filesystems.disks.' . $last_video->disk . '.driver'), ['ftp', 's3', 'sftp']))
+                        @if(in_array(config('filesystems.disks.' . $last_video->disk . '.driver'), ['ftp', 'sftp']))
                             @php
                                 $file_url = config('filesystems.disks.' . $last_video->disk . '.protocol')  . '://' . config('filesystems.disks.' . $last_video->disk . '.host') . '/' .  $last_video->getDiskPath();
+                            @endphp
+                        @elseif(in_array(config('filesystems.disks.' . $last_video->disk . '.driver'), ['s3']))
+                            @php
+                                $file_url = 'https://' . config('filesystems.disks.' . $last_video->disk . '.bucket') .
+                                    '.' . config('filesystems.disks.' . $last_video->disk . '.region') .
+                                    '/' . $last_video->getDiskPath();
                             @endphp
                         @else
                             @php

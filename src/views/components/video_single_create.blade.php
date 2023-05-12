@@ -55,7 +55,7 @@
     <div class="col-md-12 video_files">
         @if( old($name) )
             @foreach( old($name) as $old_video )
-                @php $last_video = \Plank\Mediable\Media::query()->find($old_video); @endphp
+                @php $last_video = config('attachment.media_model')::query()->find($old_video); @endphp
                 <div class="video_file_upload mb-2">
                     <div class="file_info">
                         <a href="{{ $last_video->getUrl() }}">

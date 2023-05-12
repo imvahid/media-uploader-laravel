@@ -10,6 +10,6 @@ class DownloadAttachmentController extends Controller
 {
     public function generate(Request $request)
     {
-        return Storage::disk('private')->download($request->path);
+        return Storage::disk(config('attachment.default_disk'))->download($request->path);
     }
 }

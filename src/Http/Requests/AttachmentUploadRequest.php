@@ -58,6 +58,14 @@ class AttachmentUploadRequest extends FormRequest
             'file.mimes' => config('attachment.mimes_validation_message'),
             'file.max' => config('attachment.size_validation_message')
         ];
+    }
 
+    public function prepareForValidation()
+    {
+        if (! request()->has('disk')) {
+            $this->merge([
+                'disk' => config('attachment.default_disk')
+            ]);
+        }
     }
 }

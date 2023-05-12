@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'media_model' => 'Plank\\Mediable\\Media', // Default media model from plank package or your extended model from plank
+    'connection_name' => null, // If set null, use default connection
+    'default_disk' => 'public', // In config/filesystems.php => [public, private, ftp, sftp, s3]
+
     'image_valid_mimes' => 'jpeg,png,jpg,gif',
     'image_maximum_size' => 5, // Megabyte
     'image_variant_list' => ['thumbnail'], // The first variant of list is main variant and we use it for thumbnail

@@ -56,19 +56,25 @@
     <div class="col-md-12 uploaded_files">
         @if( old($name, $data) )
             @foreach( old($name, $data) as $old_attachment )
-                @php $last_attachment = \Plank\Mediable\Media::query()->find($old_attachment); @endphp
+                @php $last_attachment = config('attachment.media_model')::query()->find($old_attachment); @endphp
                 <div class="attachment_file_upload mb-2">
                     <div class="file_info">
-                        @if(in_array(config('filesystems.disks.' . $last_attachment->disk . '.driver'), ['ftp', 's3', 'sftp']))
+                        @if(in_array(config('filesystems.disks.' . $last_attachment->disk . '.driver'), ['ftp', 'sftp']))
                             @php
                                 $file_url = config('filesystems.disks.' . $last_attachment->disk . '.protocol')  . '://' .
                                     config('filesystems.disks.' . $last_attachment->disk . '.host') . '/' .
                                     config('filesystems.disks.' . $last_attachment->disk . '.base_url') .
                                     $last_attachment->getDiskPath();
                             @endphp
+                        @elseif(in_array(config('filesystems.disks.' . $last_attachment->disk . '.driver'), ['s3']))
+                            @php
+                                $file_url = 'https://' . config('filesystems.disks.' . $last_attachment->disk . '.bucket') .
+                                    '.' . config('filesystems.disks.' . $last_attachment->disk . '.region') .
+                                    '/' . $last_attachment->getDiskPath();
+                            @endphp
                         @elseif(config('filesystems.disks.' . $last_attachment->disk . '.driver') == 'local' && config('filesystems.disks.' . $last_attachment->disk . '.visibility') == 'private')
                             @php
-                                $file_url = \Illuminate\Support\Facades\URL::temporarySignedRoute('download.attachment', now()->addHours(6), ['path' => $last_attachment->getDiskPath()]);
+                                $file_url = \Illuminate\Support\Facades\URL::temporarySignedRoute('download.attachment', now()->addHours(config('attachment.attachment_download_link_expire_time')), ['path' => $last_attachment->getDiskPath()]);
                             @endphp
                         @else
                             @php

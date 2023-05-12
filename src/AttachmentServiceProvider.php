@@ -21,7 +21,6 @@ class AttachmentServiceProvider extends ServiceProvider
         //
     }
 
-
     /**
      * Bootstrap services.
      *
@@ -45,7 +44,7 @@ class AttachmentServiceProvider extends ServiceProvider
             'thumbnail',
             ImageManipulation::make(function (Image $image) {
                 $image->fit(200, 200);
-            })->outputPngFormat()
+            })->makePublic()->outputPngFormat()
         );
 
         Validator::extend('attachment_check_disk_is_public', function ($attribute, $value, $parameters, $validator) {

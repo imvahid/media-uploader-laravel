@@ -58,8 +58,8 @@
     </div>
     <div class="col-md-12 gallery_files">
         @if( old( $name ) )
-            @foreach( old( $name) as $old_image )
-                @php $last_image = \Plank\Mediable\Media::query()->find($old_image); @endphp
+            @foreach( old($name) as $old_image )
+                @php $last_image = config('attachment.media_model')::query()->find($old_image); @endphp
                 <div class="gallery_file_upload mb-2">
                     <div class="file_info">
                         <a class="uploaded_file_thumbnail" data-lity target="_blank" href="{{ $last_image->getUrl() }}">
