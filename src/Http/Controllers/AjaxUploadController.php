@@ -36,7 +36,7 @@ class AjaxUploadController extends Controller
         (config('attachment.hash_file_names'))
             ? $media = MediaUploader::fromSource($request->file)
             ->toDestination($disk, jdate()->format('Y/m'))
-            ->useHashForFilename()
+            ->useFilename($this->generateName())
             ->upload()
             : $media = MediaUploader::fromSource($request->file)
             ->toDestination($disk, jdate()->format('Y/m'))
@@ -75,7 +75,7 @@ class AjaxUploadController extends Controller
         (config('attachment.hash_file_names'))
             ? $media = MediaUploader::fromSource($request->file)
             ->toDestination($request->disk, jdate()->format('Y/m'))
-            ->useHashForFilename()
+            ->useFilename($this->generateName())
             ->upload()
             : $media = MediaUploader::fromSource($request->file)
             ->toDestination($request->disk, jdate()->format('Y/m'))
@@ -146,5 +146,15 @@ class AjaxUploadController extends Controller
 
         $response = ['message' => config('attachment.remove_file_success_message'), 'status' => 200];
         return response()->json($response);
+    }
+
+    public function generateName()
+    {
+        return jdate()->format('dmYsiH') . $this->integerToken(6);
+    }
+
+    public function integerToken($length = 5)
+    {
+        return mt_rand(pow(10, $length - 1), pow(10, $length) - 1);
     }
 }
