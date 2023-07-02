@@ -43,7 +43,7 @@ class AttachmentServiceProvider extends ServiceProvider
         ImageManipulator::defineVariant(
             'thumbnail',
             ImageManipulation::make(function (Image $image) {
-                $image->fit(200, 200);
+                $image->fit(400, 400);
             })->makePublic()->outputPngFormat()
         );
 
